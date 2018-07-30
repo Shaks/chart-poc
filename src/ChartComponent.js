@@ -1,9 +1,13 @@
 import React, { Component } from 'react';
 import Chart from 'chart.js';
-//import axios from 'axios';
+import datalabels from 'chartjs-plugin-datalabels';
 
 class ChartComponent extends Component {
     
+    chart = null;
+
+    data = null;
+
     totalizer = {
       id: 'totalizer',
     
@@ -15,7 +19,6 @@ class ChartComponent extends Component {
           if (chart.isDatasetVisible(datasetIndex)) {
             utmost = datasetIndex
             dataset.data.forEach((value, index) => {
-              console.log(value);
               totals[index] = (totals[index] || 0) + value
             })
           }
@@ -29,7 +32,7 @@ class ChartComponent extends Component {
     }
 
     options = {
-      responsive: false,
+      responsive: true,
       maintainAspectRatio: false,
       scales: {
         xAxes: [{
@@ -55,46 +58,51 @@ class ChartComponent extends Component {
       plugins: {
         datalabels: {
           formatter: (value, ctx) => {
-            console.log(value);
             return ctx.chart.$totalizer.totals[ctx.dataIndex]
           },
           align: 'top',
           anchor: 'top',
           display: function(ctx) {
-            return ctx.datasetIndex === ctx.chart.$totalizer.utmost
+            return ctx.chart.$totalizer.utmost !== 0 && (ctx.datasetIndex === ctx.chart.$totalizer.utmost);
           }
         }
       }
     }
 
+    // plugins: [{
+    //   beforeInit: function(chart, options) {
+    //     console.log('yolo');
+    //   }
+    // }]
+
     componentDidMount = () => {
       // Load this data via AJAX
-      let data = {
-        labels: ['05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20'],
+        this.data = {
+        labels: ['05', '06', '07', '08', '09', '10', '11'],
         datasets: [{
             label: 'User Activity',
-            data: [2, 19, 3, 17, 6, 13, 7],
+            data: [2, 19, 3, 17, 6, 13],
             backgroundColor: "red"
         }, {
             label: 'System Activity',
-            data: [2, 29, 5, 5, 2, 3, 10],
+            data: [2, 29, 5, 5, 2, 3],
             backgroundColor: "green"
         }, {
             label: 'External Interface',
-            data: [4, 20, 15, 8, 12, 3, 1],
+            data: [4, 20, 15, 8, 12, 3, 20],
             backgroundColor: "blue"
         }]
       };
-      this.initializeChart(data);
+      this.initializeChart(this.data);
     }
 
     resetChart = () => {
-      console.log('reset');
+      this.chart.destroy();
+      this.initializeChart(this.data);
     }
 
     initializeChart = (data) => {
-        let ctx = document.getElementById("chart").getContext("2d");
-        let chart = new Chart(ctx, {
+        this.chart = new Chart(document.getElementById("chart"), {
             type: 'bar',
             data: data,
             options: this.options,
