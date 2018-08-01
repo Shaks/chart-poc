@@ -1,13 +1,12 @@
 import React, { Component } from 'react';
 import Chart from 'chart.js';
 import datalabels from 'chartjs-plugin-datalabels';
+import axios from 'axios';
 
-class ChartComponent extends Component {
+class StackedBarChartComponent extends Component {
     
     chart = null;
-
-    data = null;
-
+    data = {};
     totalizer = {
       id: 'totalizer',
     
@@ -30,7 +29,6 @@ class ChartComponent extends Component {
         }
       }
     }
-
     options = {
       responsive: true,
       maintainAspectRatio: false,
@@ -77,6 +75,7 @@ class ChartComponent extends Component {
 
     componentDidMount = () => {
       // Load this data via AJAX
+      // axios.get(`http://localhost:8000/api/charts`).
         this.data = {
         labels: ['05', '06', '07', '08', '09', '10', '11'],
         datasets: [{
@@ -121,4 +120,4 @@ class ChartComponent extends Component {
 
 }
 
-export default ChartComponent;
+export default StackedBarChartComponent;
